@@ -21,6 +21,8 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
     md5: %{}
   ]
 
+  @elixir_ls_folder ".elixir_ls"
+
   # Client API
 
   def supported? do
@@ -215,13 +217,18 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
   end
 
   defp temp_file_path(root_path, file) do
-    Path.join([root_path, ".elixir_ls/dialyzer_tmp", file])
+    Path.join([root_path, @elixir_ls_folder, "dialyzer_tmp", file])
+  end
+
+  defp prepare_temp_dir(root_path) do
+    gitignore_path = Path.join([root_path, @elixir_ls_folder, ".gitignore"])
+    File.mkdir_p!(Path.dirname(gitignore_path))
+    File.write!(gitignore_path, "*")
   end
 
   defp write_temp_file(root_path, file_path, content) do
-    tmp_path = temp_file_path(root_path, file_path)
-    File.mkdir_p!(Path.dirname(tmp_path))
-    File.write!(tmp_path, content)
+    temp_file_path(root_path, file_path)
+    |> File.write!(content)
   end
 
   defp compile(parent, state) do
@@ -235,6 +242,8 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
       removed_files: removed_files,
       file_changes: file_changes
     } = state
+
+    :ok = prepare_temp_dir(root_path)
 
     {us, {active_plt, mod_deps, md5, warnings, timestamp}} =
       :timer.tc(fn ->
