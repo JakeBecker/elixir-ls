@@ -20,12 +20,12 @@ defmodule ElixirLS.LanguageServer.Server do
   alias ElixirLS.LanguageServer.{SourceFile, Build, Protocol, JsonRpc, Dialyzer}
 
   alias ElixirLS.LanguageServer.Providers.{
-          Completion,
-          Hover,
-          Definition,
-          Formatting,
-          SignatureHelp
-        }
+    Completion,
+    Hover,
+    Definition,
+    Formatting,
+    SignatureHelp
+  }
 
   use Protocol
 
@@ -402,7 +402,11 @@ defmodule ElixirLS.LanguageServer.Server do
     %{
       "textDocumentSync" => 1,
       "hoverProvider" => true,
-      "completionProvider" => %{},
+      # Required to make autocomplete work in other editors
+      "completionProvider" => %{
+        resolveProvider: true,
+        triggerCharacters: ["."]
+      },
       "definitionProvider" => true,
       "documentFormattingProvider" => Formatting.supported?(),
       "signatureHelpProvider" => %{"triggerCharacters" => ["("]}

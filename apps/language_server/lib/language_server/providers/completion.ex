@@ -8,6 +8,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion do
   text before the cursor so we can filter out suggestions that are not relevant.
   """
 
+  alias ElixirLS.LanguageServer.Providers.Completion.Snippets
+
   def completion(text, line, character, snippets_supported) do
     text_before_cursor =
       text
@@ -40,7 +42,15 @@ defmodule ElixirLS.LanguageServer.Providers.Completion do
 
     items =
       if snippets_supported do
-        items
+        items =
+          Enum.reject(
+            items,
+            &Enum.any?(Snippets.get_snippets(), fn %{"label" => label} ->
+              String.starts_with?(&1["label"], label)
+            end)
+          )
+
+        items ++ Snippets.get_snippets()
       else
         Enum.map(items, &remove_snippets/1)
       end
