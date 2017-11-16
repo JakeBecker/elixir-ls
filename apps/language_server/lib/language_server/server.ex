@@ -344,7 +344,7 @@ defmodule ElixirLS.LanguageServer.Server do
         "completion",
         "completionItem",
         "snippetSupport"
-      ]) != false
+      ]) not in [false, nil]
 
     fun = fn ->
       {
