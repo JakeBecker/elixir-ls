@@ -7,8 +7,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
   @snippets [
     %{
       "label" => "case",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "case",
       "documentation" => "case",
       "insertText" => "case $1 do\n\t$2 ->\n\t\t$0\nend",
@@ -18,8 +18,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "cond",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "cond",
       "documentation" => "cond",
       "insertText" => "cond do\n\t$1 ->\n\t\t$0\nend",
@@ -29,8 +29,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "def",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "def",
       "documentation" => "def",
       "insertText" => "def $1 do\n\t$0\nend",
@@ -40,8 +40,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "test",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "test",
       "documentation" => "test",
       "insertText" => "test $1 do\n\t$0\nend",
@@ -51,8 +51,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "describe",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "describe",
       "documentation" => "describe",
       "insertText" => "describe $1 do\n\t$0\nend",
@@ -62,8 +62,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defcallback",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defcallback",
       "documentation" => "defcallback",
       "insertText" => "defcallback $1 :: $0",
@@ -72,8 +72,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defdelegate",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defdelegate",
       "documentation" => "defdelegate",
       "insertText" => "defdelegate $1 to: $0",
@@ -83,8 +83,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defexception",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defexception",
       "documentation" => "defexception",
       "insertText" => "defexception [${1::message}]",
@@ -94,8 +94,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defimpl",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defimpl",
       "documentation" => "defimpl",
       "insertText" => "defimpl $1, for: $2 do\n  $0\nend",
@@ -105,8 +105,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defmacro",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defmacro",
       "documentation" => "defmacro",
       "insertText" => "defmacro $1 do\n\t$0\nend",
@@ -116,8 +116,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defmacrocallback",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defmacrocallback",
       "documentation" => "defmacrocallback",
       "insertText" => "defmacrocallback $1 :: $0",
@@ -127,8 +127,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defmacrop",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defmacrop",
       "documentation" => "defmacrop",
       "insertText" => "defmacrop $1 do\n\t$0\nend",
@@ -138,8 +138,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defmodule",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defmodule",
       "documentation" => "defmodule",
       "insertText" => "defmodule $1 do\n\t$0\nend",
@@ -149,8 +149,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defp",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defp",
       "documentation" => "defp",
       "insertText" => "defp $1 do\n\t$0\nend",
@@ -160,8 +160,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defprotocol",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defprotocol",
       "documentation" => "defprotocol",
       "insertText" => "defprotocol $1 do\n  $0\nend",
@@ -171,8 +171,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "defstruct",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "defstruct",
       "documentation" => "defstruct",
       "insertText" => "defstruct $1: $2",
@@ -182,8 +182,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "do",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "do",
       "documentation" => "do",
       "insertText" => "do\n\t$0\nend",
@@ -193,8 +193,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "@doc",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "@doc",
       "documentation" => "@doc",
       "insertText" => "@doc \"\"\"\n$0\n\"\"\"",
@@ -204,8 +204,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "i",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "i",
       "documentation" => "i",
       "insertText" => "inspect($0)",
@@ -215,8 +215,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "ii",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "ii",
       "documentation" => "ii",
       "insertText" => "IO.inspect($0)",
@@ -226,8 +226,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "@moduledoc",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "@moduledoc",
       "documentation" => "@moduledoc",
       "insertText" => "@moduledoc \"\"\"\n$0\n\"\"\"",
@@ -237,8 +237,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "@spec",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "@spec",
       "documentation" => "@spec",
       "insertText" => "@spec $0",
@@ -248,8 +248,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "receive",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "receive",
       "documentation" => "receive",
       "insertText" =>
@@ -260,8 +260,8 @@ defmodule ElixirLS.LanguageServer.Providers.Completion.Snippets do
     },
     %{
       "label" => "require",
-      # Function
-      "kind" => 3,
+      # Snippet
+      "kind" => 15,
       "detail" => "require",
       "documentation" => "require",
       "insertText" => "require $0",

@@ -404,7 +404,8 @@ defmodule ElixirLS.LanguageServer.Server do
       "hoverProvider" => true,
       # Required to make autocomplete work in other editors
       "completionProvider" => %{
-        resolveProvider: true,
+        # This activate `completionItem/resolve` send by the client
+        resolveProvider: false,
         triggerCharacters: ["."]
       },
       "definitionProvider" => true,

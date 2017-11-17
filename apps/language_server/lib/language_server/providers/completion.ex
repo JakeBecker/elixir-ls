@@ -42,15 +42,22 @@ defmodule ElixirLS.LanguageServer.Providers.Completion do
 
     items =
       if snippets_supported do
-        items =
-          Enum.reject(
-            items,
-            &Enum.any?(Snippets.get_snippets(), fn %{"label" => label} ->
-              String.starts_with?(&1["label"], label)
+        # Override the given ones by ElixirSense
+        Enum.map(items, fn item ->
+          snippet =
+            Enum.find(Snippets.get_snippets(), fn %{"label" => snippet_label} ->
+              # We add the "(" to avoid problems when `.` is trigered on the client
+              String.starts_with?(item["label"], snippet_label <> "(")
             end)
-          )
 
-        items ++ Snippets.get_snippets()
+          case snippet do
+            nil ->
+              item
+
+            _ ->
+              snippet
+          end
+        end)
       else
         Enum.map(items, &remove_snippets/1)
       end
