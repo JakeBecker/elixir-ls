@@ -402,7 +402,7 @@ defmodule ElixirLS.LanguageServer.Server do
     %{
       "textDocumentSync" => 1,
       "hoverProvider" => true,
-      "completionProvider" => %{},
+      "completionProvider" => %{triggerCharacters" => ["."]},
       "definitionProvider" => true,
       "documentFormattingProvider" => Formatting.supported?(),
       "signatureHelpProvider" => %{"triggerCharacters" => ["("]}
