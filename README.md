@@ -37,6 +37,20 @@ You may want to install Elixir and Erlang from source, using the [kiex](https://
 
 Feel free to create and publish your own client packages and add them to this list!
 
+## Mix Task
+
+ElixirLS can be run with `mix elixir_ls` when specified as project dependency in `mix.exs`:
+
+```elixir
+defp deps do
+  [
+    {:elixir_ls, git: "https://github.com/JakeBecker/elixir-ls.git", only: :dev},
+  ]
+end
+```
+
+This provides an easy integration with different editors, without need to install ElixirLS globally.
+
 ## Debugger support
 
 ElixirLS includes debugger support adhering to the [VS Code debugger protocol](https://code.visualstudio.com/docs/extensionAPI/api-debugging) which is closely related to the Language Server Protocol. At the moment, only line breakpoints are supported.
