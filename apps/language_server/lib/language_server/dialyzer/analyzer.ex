@@ -42,7 +42,7 @@ defmodule ElixirLS.LanguageServer.Dialyzer.Analyzer do
   Record.defrecordp(:analysis, Record.extract(:analysis, from_lib: "dialyzer/src/dialyzer.hrl"))
 
   def analyze(active_plt, []) do
-    {active_plt, %{}, []}
+    {:ok, {active_plt, %{}, []}}
   end
 
   def analyze(active_plt, files) do
@@ -56,6 +56,10 @@ defmodule ElixirLS.LanguageServer.Dialyzer.Analyzer do
       )
 
     parent = self()
+
+    # dialyzer_analysis_callgraph.start exits on failure
+    # need to unset :trap_exit when analysis finises
+    Process.flag(:trap_exit, true)
 
     pid =
       spawn_link(fn ->
@@ -89,7 +93,8 @@ defmodule ElixirLS.LanguageServer.Dialyzer.Analyzer do
         main_loop(state)
 
       {^backend_pid, :done, new_plt, _new_doc_plt} ->
-        {new_plt, state.mod_deps, state.warnings}
+        Process.flag(:trap_exit, false)
+        {:ok, {new_plt, state.mod_deps, state.warnings}}
 
       {^backend_pid, :ext_calls, ext_calls} ->
         state = put_in(state.external_calls, ext_calls)
@@ -106,9 +111,13 @@ defmodule ElixirLS.LanguageServer.Dialyzer.Analyzer do
 
       {:EXIT, ^backend_pid, {:error, reason}} ->
         print_failure(reason, state.log_cache)
+        Process.flag(:trap_exit, false)
+        {:error, {:exit, {:error, reason}}}
 
       {:EXIT, ^backend_pid, reason} when reason != :normal ->
         print_failure(reason, state.log_cache)
+        Process.flag(:trap_exit, false)
+        {:error, {:exit, reason}}
 
       _ ->
         main_loop(state)

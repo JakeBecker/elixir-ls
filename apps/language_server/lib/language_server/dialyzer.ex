@@ -318,17 +318,26 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
             "#{inspect(modules_to_analyze)}"
         )
 
-        {active_plt, new_mod_deps, raw_warnings} = Analyzer.analyze(active_plt, files_to_analyze)
+        with {:ok, {active_plt, new_mod_deps, raw_warnings}} <- Analyzer.analyze(active_plt, files_to_analyze)
+        do
+          mod_deps = Map.merge(mod_deps, new_mod_deps)
+          warnings = add_warnings(warnings, raw_warnings)
 
-        mod_deps = Map.merge(mod_deps, new_mod_deps)
-        warnings = add_warnings(warnings, raw_warnings)
+          md5 =
+            for {file, {_, hash}} <- file_changes, into: md5 do
+              {file, hash}
+            end
 
-        md5 =
-          for {file, {_, hash}} <- file_changes, into: md5 do
-            {file, hash}
-          end
-
-        {active_plt, mod_deps, md5, warnings}
+          {active_plt, mod_deps, md5, warnings}
+        else
+          {:error, reason} ->
+            JsonRpc.log_message(
+              :warning,
+              "[ElixirLS Dialyzer] Analyzing #{inspect(modules_to_analyze)} modules failed: " <>
+                "#{inspect(reason)}"
+            )
+            {active_plt, mod_deps, md5, warnings}
+        end
       end)
 
     JsonRpc.log_message(
