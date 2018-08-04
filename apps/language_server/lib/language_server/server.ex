@@ -390,8 +390,12 @@ defmodule ElixirLS.LanguageServer.Server do
 
   defp handle_request(code_lens_req(_id, uri), state) do
     if dialyzer_enabled?(state) and state.settings["suggestSpecs"] != false do
-      %{^uri => %{text: text}} = state.source_files
-      {:async, fn -> CodeLens.code_lens(uri, text) end, state}
+      case state.source_files do
+        %{^uri => %{text: text}} ->
+          {:async, fn -> CodeLens.code_lens(uri, text) end, state}
+        _ ->
+          {:error, :invalid_request, nil, state}
+      end
     else
       {:ok, nil, state}
     end
