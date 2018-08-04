@@ -32,18 +32,27 @@ defmodule ElixirLS.LanguageServer.Providers.DocumentSymbols do
   }
 
   def symbols(uri, text) do
-    symbols = list_symbols(text) |> Enum.map(&build_symbol_information(uri, &1))
-    {:ok, symbols}
+    with {:ok, symbol_list} <- list_symbols(text)
+    do
+      symbols = symbol_list
+      |> Enum.map(&build_symbol_information(uri, &1))
+      {:ok, symbols}
+    else
+      {:error, reason} -> {:error, :parse_error, inspect(reason)}
+    end
   end
 
   defp list_symbols(src) do
-    {_ast, symbol_list} =
-      Code.string_to_quoted!(src, columns: true, line: 0)
+    with {:ok, macro} <- Code.string_to_quoted(src, columns: true, line: 0)
+    do
+      {_ast, symbol_list} = macro
       |> Macro.prewalk([], fn ast, symbols ->
         {ast, extract_module(ast) ++ symbols}
       end)
-
-    symbol_list
+      {:ok, symbol_list}
+    else
+      error -> error
+    end
   end
 
   # Identify and extract the module symbol, and the symbols contained within the module
