@@ -37,6 +37,7 @@ You may want to install Elixir and Erlang from source, using the [kiex](https://
 | -------- | ----------------------------------------------------------------------------- | ---------------------------------------------- |
 | VS Code  | [JakeBecker/vscode-elixir-ls](https://github.com/JakeBecker/vscode-elixir-ls) | Supports all ElixirLS features                 |
 | Atom IDE | [JakeBecker/ide-elixir](https://github.com/JakeBecker/ide-elixir)             | Does not support debugger or @spec suggestions |
+| Vim/Neovim | [w0rp/ale](https://github.com/w0rp/ale)                                     | Basic support                                     |
 
 Feel free to create and publish your own client packages and add them to this list!
 
