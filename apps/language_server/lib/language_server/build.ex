@@ -199,12 +199,19 @@ defmodule ElixirLS.LanguageServer.Build do
     :ok
   end
 
-  defp make_wsl_path( "/" <> <<drive_letter::bytes-size(1)>> <> ":" <> rest_path ), do: "/mnt/#{drive_letter}#{rest_path}"
-  defp make_wsl_path(root_path), do: root_path
-
   defp path_changed?(root_path) do
-    !(Path.absname(File.cwd!()) == Path.absname(root_path) || Path.absname(File.cwd!()) == Path.absname(make_wsl_path(root_path)))
+    path_changed?(root_path, wsl?())
   end
+
+  # No WSL
+  defp path_changed?(root_path, false), do: Path.absname(File.cwd!()) != Path.absname(root_path)
+  # WSL detected
+  defp path_changed?(root_path, true),  do: Path.absname(File.cwd!()) != Path.absname(translate_path_to_wsl(root_path))
+
+  defp wsl?(), do: File.exists?("/proc/version") && Regex.match?(~r/microsoft/ui, File.read!("/proc/version"))
+
+  defp translate_path_to_wsl( "/" <> <<drive_letter::bytes-size(1)>> <> ":" <> rest_path ), do: "/mnt/#{drive_letter}#{rest_path}"
+  defp translate_path_to_wsl(root_path), do: root_path
 
   defp range(position, nil) when is_integer(position) do
     line = position - 1
