@@ -3,7 +3,7 @@ defmodule ElixirLS.LanguageServer.Build do
   require Logger
 
   def build(parent, root_path, fetch_deps?) do
-    if Path.absname(File.cwd!()) != Path.absname(root_path) do
+    if path_changed?(root_path) do
       IO.puts("Skipping build because cwd changed from #{root_path} to #{File.cwd!()}")
       {nil, nil}
     else
@@ -197,6 +197,13 @@ defmodule ElixirLS.LanguageServer.Build do
     end
 
     :ok
+  end
+
+  defp make_wsl_path( "/" <> <<drive_letter::bytes-size(1)>> <> ":" <> rest_path ), do: "/mnt/#{drive_letter}#{rest_path}"
+  defp make_wsl_path(root_path), do: root_path
+
+  defp path_changed?(root_path) do
+    !(Path.absname(File.cwd!()) == Path.absname(root_path) || Path.absname(File.cwd!()) == Path.absname(make_wsl_path(root_path)))
   end
 
   defp range(position, nil) when is_integer(position) do
