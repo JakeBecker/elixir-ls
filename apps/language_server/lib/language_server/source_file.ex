@@ -51,14 +51,15 @@ defmodule ElixirLS.LanguageServer.SourceFile do
   def path_to_uri(path) do
     uri_path =
       path
-      |> path_from_wsl() # if in WSL translate to Windows path
       |> Path.expand()
+      |> path_from_wsl() # if in WSL translate to Windows path
       |> URI.encode()
       |> String.replace(":", "%3A")
 
-    case :os.type() do
-      {:win32, _} -> "file:///" <> uri_path
-      _ -> "file://" <> uri_path
+    cond do
+      :win32 == elem(:os.type(), 0)                         -> "file:///" <> uri_path
+      in_wsl?() && Regex.match?(~r/^[a-z]%3A/i, uri_path)   -> "file:///" <> uri_path
+      true                                                  -> "file://" <> uri_path
     end
   end
 
