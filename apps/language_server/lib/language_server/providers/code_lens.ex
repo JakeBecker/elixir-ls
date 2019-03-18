@@ -100,6 +100,7 @@ defmodule ElixirLS.LanguageServer.Providers.CodeLens do
     resp =
       for {_, line, {mod, fun, arity}, contract} <- Server.suggest_contracts(uri),
           SourceFile.function_def_on_line?(text, line, fun),
+          SourceFile.function_requires_spec?(text, line, fun),
           spec = ContractTranslator.translate_contract(fun, contract) do
         %{
           "range" => range(line - 1, 0, line - 1, 0),

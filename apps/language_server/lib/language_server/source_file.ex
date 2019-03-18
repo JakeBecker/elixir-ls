@@ -3,6 +3,8 @@ defmodule ElixirLS.LanguageServer.SourceFile do
 
   defstruct [:text, :version, dirty?: false]
 
+  @impl_regex ~r{^\s+@impl\s+}
+
   def lines(%__MODULE__{text: text}) do
     lines(text)
   end
@@ -134,5 +136,26 @@ defmodule ElixirLS.LanguageServer.SourceFile do
       line_text ->
         Regex.match?(Regex.compile!("^\s*def\s+#{Regex.escape(to_string(fun))}"), line_text)
     end
+  end
+
+  def function_requires_spec?(text, line, fun) do
+    fun_def_regex = Regex.compile!("^\s*def\s+#{Regex.escape(to_string(fun))}")
+
+    text
+    |> lines()
+    |> Enum.slice(0, line - 1)
+    |> Enum.reverse()
+    |> Enum.reduce_while(true, fn line_text, requires_spec? ->
+      case Regex.match?(@impl_regex, line_text) do
+        true ->
+          {:halt, false}
+
+        false ->
+          case Regex.match?(fun_def_regex, line_text) do
+            true -> {:halt, true}
+            false -> {:cont, requires_spec?}
+          end
+      end
+    end)
   end
 end
