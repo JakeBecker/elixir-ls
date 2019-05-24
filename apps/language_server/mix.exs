@@ -5,7 +5,7 @@ defmodule ElixirLS.LanguageServer.Mixfile do
     [
       app: :language_server,
       version: "0.2.24",
-      elixir: ">= 1.6.5",
+      elixir: ">= 1.7.0",
       build_path: "../../_build",
       config_path: "config/config.exs",
       deps_path: "../../deps",
@@ -23,7 +23,7 @@ defmodule ElixirLS.LanguageServer.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [mod: {ElixirLS.LanguageServer, []}, extra_applications: [:mix, :logger]]
+    [mod: {ElixirLS.LanguageServer, []}, applications: [:mix, :logger]]
   end
 
   # Dependencies can be Hex packages:
@@ -40,7 +40,8 @@ defmodule ElixirLS.LanguageServer.Mixfile do
       {:elixir_ls_utils, in_umbrella: true},
       {:elixir_sense, github: "msaraiva/elixir_sense"},
       {:forms, "~> 0.0.1"},
-      {:erl2ex, github: "dazuma/erl2ex"}
+      {:erl2ex, github: "dazuma/erl2ex"},
+      {:dialyxir, "~> 1.0.0-rc.2"}
     ]
   end
 end

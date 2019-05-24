@@ -13,6 +13,7 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
     :analysis_pid,
     :write_manifest_pid,
     :build_ref,
+    :warning_format,
     warn_opts: [],
     mod_deps: %{},
     warnings: %{},
@@ -63,8 +64,11 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
     GenServer.start_link(__MODULE__, {parent, root_path}, name: {:global, {parent, __MODULE__}})
   end
 
-  def analyze(parent \\ self(), build_ref, warn_opts) do
-    GenServer.call({:global, {parent, __MODULE__}}, {:analyze, build_ref, warn_opts}, :infinity)
+  def analyze(parent \\ self(), build_ref, warn_opts, warning_format) do
+    GenServer.cast(
+      {:global, {parent, __MODULE__}},
+      {:analyze, build_ref, warn_opts, warning_format}
+    )
   end
 
   def analysis_finished(server, status, active_plt, mod_deps, md5, warnings, timestamp, build_ref) do
@@ -96,7 +100,7 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
     state =
       case Manifest.read(root_path) do
         {:ok, active_plt, mod_deps, md5, warnings, timestamp} ->
-          state = %{
+          %{
             state
             | plt: active_plt,
               mod_deps: mod_deps,
@@ -104,8 +108,6 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
               warnings: warnings,
               timestamp: timestamp
           }
-
-          trigger_analyze(state)
 
         :error ->
           %{state | analysis_pid: Manifest.build_new_manifest()}
@@ -119,7 +121,7 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
         _from,
         state
       ) do
-    diagnostics = to_diagnostics(warnings, state.warn_opts)
+    diagnostics = to_diagnostics(warnings, state.warn_opts, state.warning_format)
 
     Server.dialyzer_finished(state.parent, diagnostics, build_ref)
 
@@ -144,35 +146,38 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
     {:reply, :ok, state}
   end
 
-  def handle_call({:analyze, build_ref, warn_opts}, _from, state) do
-    state =
-      if Mix.Project.get() do
-        JsonRpc.log_message(:info, "[ElixirLS Dialyzer] Checking for stale beam files")
-        new_timestamp = adjusted_timestamp()
-
-        {removed_files, file_changes} =
-          update_stale(state.md5, state.removed_files, state.file_changes, state.timestamp)
-
-        state = %{
-          state
-          | warn_opts: warn_opts,
-            timestamp: new_timestamp,
-            removed_files: removed_files,
-            file_changes: file_changes,
-            build_ref: build_ref
-        }
-
-        trigger_analyze(state)
-      else
-        state
-      end
-
-    {:reply, :ok, state}
-  end
-
   def handle_call({:suggest_contracts, files}, _from, %{plt: plt} = state) do
     specs = if is_nil(plt), do: [], else: SuccessTypings.suggest_contracts(plt, files)
     {:reply, specs, state}
+  end
+
+  def handle_cast({:analyze, build_ref, warn_opts, warning_format}, state) do
+    state =
+      ElixirLS.LanguageServer.Build.with_build_lock(fn ->
+        if Mix.Project.get() do
+          JsonRpc.log_message(:info, "[ElixirLS Dialyzer] Checking for stale beam files")
+          new_timestamp = adjusted_timestamp()
+
+          {removed_files, file_changes} =
+            update_stale(state.md5, state.removed_files, state.file_changes, state.timestamp)
+
+          state = %{
+            state
+            | warn_opts: warn_opts,
+              timestamp: new_timestamp,
+              removed_files: removed_files,
+              file_changes: file_changes,
+              build_ref: build_ref,
+              warning_format: warning_format
+          }
+
+          trigger_analyze(state)
+        else
+          state
+        end
+      end)
+
+    {:noreply, state}
   end
 
   def handle_info({:"ETS-TRANSFER", _, _, _}, state) do
@@ -404,7 +409,7 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
     end
   end
 
-  defp to_diagnostics(warnings_map, warn_opts) do
+  defp to_diagnostics(warnings_map, warn_opts, warning_format) do
     tags_enabled = Analyzer.matching_tags(warn_opts)
 
     for {_beam_file, warnings} <- warnings_map,
@@ -414,18 +419,38 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
         source_file = Path.absname(to_string(source_file)),
         in_project?(source_file),
         not String.starts_with?(source_file, Mix.Project.deps_path()) do
-      message = String.trim(to_string(:dialyzer.format_warning(data)))
-      message = Regex.replace(Regex.recompile!(~r/^.*:\d+: /), message, "")
-
       %Mix.Task.Compiler.Diagnostic{
         compiler_name: "ElixirLS Dialyzer",
         file: source_file,
         position: line,
-        message: message,
+        message: warning_message(data, warning_format),
         severity: :warning,
         details: data
       }
     end
+  end
+
+  defp warning_message({_, _, {warning_name, args}} = raw_warning, warning_format)
+       when warning_format in ["dialyxir_long", "dialyxir_short"] do
+    format_function =
+      case warning_format do
+        "dialyxir_long" -> :format_long
+        "dialyxir_short" -> :format_short
+      end
+
+    try do
+      %{^warning_name => warning_module} = Dialyxir.Warnings.warnings()
+      <<_::binary>> = apply(warning_module, format_function, [args])
+    rescue
+      _ -> warning_message(raw_warning, "dialyzer")
+    catch
+      _ -> warning_message(raw_warning, "dialyzer")
+    end
+  end
+
+  defp warning_message(raw_warning, _) do
+    message = String.trim(to_string(:dialyzer.format_warning(raw_warning)))
+    Regex.replace(Regex.recompile!(~r/^.*:\d+: /), message, "")
   end
 
   # Because mtime-based stale-checking has 1-second granularity, we err on the side of
