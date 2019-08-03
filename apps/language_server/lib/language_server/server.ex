@@ -422,7 +422,14 @@ defmodule ElixirLS.LanguageServer.Server do
     parent = self()
 
     spawn_monitor(fn ->
-      result = func.()
+      result =
+        try do
+          func.()
+        rescue
+          error ->
+            {:error, :server_error, inspect(error)}
+        end
+
       GenServer.call(parent, {:request_finished, id, result}, :infinity)
     end)
   end
