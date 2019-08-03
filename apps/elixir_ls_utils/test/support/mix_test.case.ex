@@ -17,6 +17,8 @@ defmodule ElixirLS.Utils.MixTest.Case do
       Application.start(:logger)
       Mix.Task.clear()
       Mix.Shell.Process.flush()
+      Mix.ProjectStack.clear_cache()
+      Mix.ProjectStack.clear_stack()
       delete_tmp_paths()
 
       if apps do
