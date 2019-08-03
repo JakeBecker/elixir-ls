@@ -74,27 +74,36 @@ defmodule ElixirLS.LanguageServer.ServerTest do
   end
 
   test "go to definition", %{server: server} do
-    uri = "file:///file.ex"
-    code = ~S(
-      defmodule MyModule do
-        use GenServer
-      end
-    )
+    # TODO: if you get this working, switch to a dedicated fixture so we don't accidentally break later
+    in_fixture(__DIR__, "references", fn ->
+      a_file_path = "lib/a.ex"
+      a_uri = SourceFile.path_to_uri(a_file_path)
+      a_text = File.read!(a_file_path)
+      b_file_path = "lib/b.ex"
+      b_uri = SourceFile.path_to_uri(b_file_path)
+      b_text = File.read!(b_file_path)
 
-    Server.receive_packet(server, did_open(uri, "elixir", 1, code))
-    Server.receive_packet(server, definition_req(1, uri, 2, 17))
+      # NOTE: you can't find the definition of GenServer if you don't have the source.
+      # NOTE: you can't find the definition unless we already have it saved to disk.
+      # TODO: do these files have to open, or are they included somehow during intialization?
 
-    uri = "file://" <> to_string(GenServer.module_info()[:compile][:source])
+      initialize(server)
+      Server.receive_packet(server, did_open(a_uri, "elixir", 1, a_text))
+      Server.receive_packet(server, did_open(b_uri, "elixir", 2, b_text))
+      Server.receive_packet(server, definition_req(3, a_uri, 3, 8))
 
-    assert_receive response(1, %{
-                     "range" => %{
-                       "end" => %{"character" => column, "line" => 0},
-                       "start" => %{"character" => column, "line" => 0}
-                     },
-                     "uri" => ^uri
-                   })
+      assert_receive response(3, %{
+                       "range" => %{
+                         "end" => %{"character" => 9, "line" => 1},
+                         "start" => %{"character" => 6, "line" => 1}
+                       },
+                       "uri" => ^b_uri
+                     }),
+                     2000
 
-    assert column > 0
+      # This intermittantly fails with the default timeout of 1000, due to the message not being in the mailbox yet
+      # Or match on the id first and then assert the contents of the match so we don't wait for a match on assert_receive
+    end)
   end
 
   test "requests cancellation", %{server: server} do

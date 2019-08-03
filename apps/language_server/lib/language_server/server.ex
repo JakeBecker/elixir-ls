@@ -104,9 +104,9 @@ defmodule ElixirLS.LanguageServer.Server do
     end
   end
 
-  def handle_call(msg, from, state) do
-    super(msg, from, state)
-  end
+  # def handle_call(msg, from, state) do
+  #   super(msg, from, state)
+  # end
 
   def handle_cast({:build_finished, {status, diagnostics}}, state)
       when status in [:ok, :noop, :error] and is_list(diagnostics) do
@@ -149,9 +149,9 @@ defmodule ElixirLS.LanguageServer.Server do
     {:noreply, trigger_build(state)}
   end
 
-  def handle_cast(msg, state) do
-    super(msg, state)
-  end
+  # def handle_cast(msg, state) do
+  #   super(msg, state)
+  # end
 
   def handle_info(:default_config, state) do
     state =
@@ -199,9 +199,9 @@ defmodule ElixirLS.LanguageServer.Server do
     {:noreply, state}
   end
 
-  def handle_info(info, state) do
-    super(info, state)
-  end
+  # def handle_info(info, state) do
+  #   super(info, state)
+  # end
 
   ## Helpers
 

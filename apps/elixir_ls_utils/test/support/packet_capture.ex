@@ -31,9 +31,9 @@ defmodule ElixirLS.Utils.PacketCapture do
     handle_output(to_string(module.apply(fun, args)), from, reply_as, parent)
   end
 
-  def handle_info(msg, s) do
-    super(msg, s)
-  end
+  # def handle_info(msg, s) do
+  #   super(msg, s)
+  # end
 
   defp handle_output(str, from, reply_as, parent) do
     case extract_packet(str) do

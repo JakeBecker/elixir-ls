@@ -184,9 +184,9 @@ defmodule ElixirLS.LanguageServer.Dialyzer do
     {:noreply, state}
   end
 
-  def handle_info(msg, state) do
-    super(msg, state)
-  end
+  # def handle_info(msg, state) do
+  #   super(msg, state)
+  # end
 
   def terminate(reason, state) do
     if reason != :normal do

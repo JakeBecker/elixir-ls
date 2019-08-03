@@ -49,7 +49,7 @@ defmodule ElixirLS.Debugger.Output do
     {:reply, :ok, seq + 1}
   end
 
-  def handle_call(message, from, s) do
-    super(message, from, s)
-  end
+  # def handle_call(message, from, s) do
+  #   super(message, from, s)
+  # end
 end

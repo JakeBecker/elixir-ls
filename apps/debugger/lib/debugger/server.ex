@@ -108,9 +108,9 @@ defmodule ElixirLS.Debugger.Server do
     {:noreply, state}
   end
 
-  def handle_info(msg, state) do
-    super(msg, state)
-  end
+  # def handle_info(msg, state) do
+  #   super(msg, state)
+  # end
 
   def terminate(reason, _state) do
     if reason != :normal do
