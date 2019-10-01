@@ -84,6 +84,17 @@ Run `mix compile`, then `mix elixir_ls.release -o <release_dir>`. This builds th
 
 If you're packaging these archives in an IDE plugin, make sure to build using Erlang/OTP 19, not OTP 20, because OTP 20 beam files are not backwards-compatible with earlier Erlang versions. Alternatively, you can use a [precompiled release](https://github.com/JakeBecker/elixir-ls/releases).
 
+If `mix.compile` prints errors similar to this one:
+```
+== Compilation error in file lib/language_server/dialyzer/analyzer.ex ==
+** (RuntimeError) error parsing file /usr/lib/erlang/lib/dialyzer-4.1/src/dialyzer.hrl, got: {:error, :enoent}
+    (elixir) lib/record/extractor.ex:84: Record.Extractor.read_file/2
+    (elixir) lib/record/extractor.ex:50: Record.Extractor.extract_record/2
+    lib/language_server/dialyzer/analyzer.ex:42: (module)
+    (stdlib) erl_eval.erl:680: :erl_eval.do_apply/6
+```
+please make sure you have Erlang sources installed.
+
 ## Acknowledgements and related projects
 
 ElixirLS isn't the first frontend-independent server for Elixir language support. The original was [Alchemist Server](https://github.com/tonini/alchemist-server/), which powers the [Alchemist](https://github.com/tonini/alchemist.el) plugin for Emacs. Another project, [Elixir Sense](https://github.com/msaraiva/elixir_sense), builds upon Alchemist and powers the [Elixir plugin for Atom](https://github.com/msaraiva/atom-elixir) as well as another VS Code plugin, [VSCode Elixir](https://github.com/fr1zle/vscode-elixir). ElixirLS uses Elixir Sense for several code insight features. Credit for those projects goes to their respective authors.
