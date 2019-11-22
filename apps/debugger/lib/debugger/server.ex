@@ -528,8 +528,8 @@ defmodule ElixirLS.Debugger.Server do
   end
 
   defp interpretable?(module, exclude_modules) do
-    :int.interpretable(module) == true and !:code.is_sticky(module) and module != __MODULE__ and
-      module not in exclude_modules
+    module not in exclude_modules and :int.interpretable(module) == true and
+      !:code.is_sticky(module) and module != __MODULE__
   end
 
   defp check_erlang_version do
