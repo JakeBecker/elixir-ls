@@ -565,6 +565,10 @@ defmodule ElixirLS.Debugger.Server do
 
   defp launch_task(task, args) do
     Mix.Task.run(task, args)
+    if "--no-halt" in args do
+      # workaround. "--no-halt"  does not work in Elixir 1.9.x
+      Process.sleep(:infinity)
+    end
   end
 
   # Interpreting modules defined in .exs files requires that we first load the file and save any
