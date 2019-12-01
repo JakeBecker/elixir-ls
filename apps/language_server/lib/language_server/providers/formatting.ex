@@ -8,7 +8,7 @@ defmodule ElixirLS.LanguageServer.Providers.Formatting do
 
   def format(source_file, uri, project_dir) do
     if can_format?(uri, project_dir) do
-      file = SourceFile.path_from_uri(uri) |> Path.relative_to(project_dir)
+      file = if project_dir == nil, do: SourceFile.path_from_uri(uri), else: SourceFile.path_from_uri(uri) |> Path.relative_to(project_dir)
       opts = formatter_opts(file, project_dir)
       formatted = IO.iodata_to_binary([Code.format_string!(source_file.text, opts), ?\n])
 
