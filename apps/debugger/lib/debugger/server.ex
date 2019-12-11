@@ -524,7 +524,15 @@ defmodule ElixirLS.Debugger.Server do
     |> Path.wildcard()
     |> Enum.map(&(Path.basename(&1, ".beam") |> String.to_atom()))
     |> Enum.filter(&interpretable?(&1, exclude_modules))
-    |> Enum.map(&:int.ni(&1))
+    |> Enum.map(fn module ->
+      IO.puts("loading #{module}")
+      try do
+        :int.ni(module)
+        IO.puts("success")
+      rescue
+        error -> IO.puts("failure #{Exception.message(error)}")
+      end
+    end)
   end
 
   defp interpretable?(module, exclude_modules) do
