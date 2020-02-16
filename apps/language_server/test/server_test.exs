@@ -108,6 +108,11 @@ defmodule ElixirLS.LanguageServer.ServerTest do
     }
   end
 
+  test "requests shutdown", %{server: server} do
+    Server.receive_packet(server, notification("shutdown"))
+    assert %{received_shutdown?: true} = :sys.get_state(server)
+  end
+
   # TODO: Fix this test for the incremental formatter
   test "formatter", %{server: server} do
     in_fixture(__DIR__, "formatter", fn ->
