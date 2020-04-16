@@ -1,3 +1,7 @@
+# This project has moved!
+
+It's now being maintained by proactive volunteers from the Elixir community over at [elixir-lsp](https://github.com/elixir-lsp)/[elixir-ls](https://github.com/elixir-lsp/elixir-ls). Updates will continue to be published from that repo to the original VS Code extension, so no need to switch plugins if you're using VS Code.
+
 ### v0.2.25: 23 May 2019
 
 - Fix compatibility with Elixir 1.9

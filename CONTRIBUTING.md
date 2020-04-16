@@ -1,1 +1,3 @@
-While you can develop ElixirLS on its own, it's easiest to test out changes if you clone the [vscode-elixir-ls](https://github.com/JakeBecker/vscode-elixir-ls) repository instead. It includes ElixirLS as a Git submodule, so you can make your changes in the submodule directory and launch the extension from the parent directory via the included "Launch Extension" configuration in `launch.json`. See the README on that repo for more details.
+# This project has moved!
+
+It's now being maintained by proactive volunteers from the Elixir community over at [elixir-lsp](https://github.com/elixir-lsp)/[elixir-ls](https://github.com/elixir-lsp/elixir-ls). All continued development should happen over at that repo instead.
